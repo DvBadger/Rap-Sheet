@@ -4,16 +4,11 @@
 // a downloaded update installs when the app is quit, or when the user presses "Restart to update".
 const { log } = require('./logger');
 
-const PLACEHOLDER = 'YOUR-GITHUB-USERNAME';
+// Where releases are published. Kept in code on purpose: the installer strips the "build" section out of the
+// packaged package.json, so the address cannot be read from there at run time.
+const FEED = { provider: 'github', owner: 'DvBadger', repo: 'Rap-Sheet' };
 
-function publishConfig() {
-  try {
-    const p = require('../package.json');
-    const pub = p.build && p.build.publish;
-    const c = Array.isArray(pub) ? pub[0] : pub;
-    return c && c.provider === 'github' && c.owner && c.owner !== PLACEHOLDER && c.repo ? c : null;
-  } catch (e) { return null; }
-}
+function publishConfig() { return FEED; }
 
 class Updater {
   constructor({ app, onChange }) {
@@ -32,6 +27,7 @@ class Updater {
     try {
       const { autoUpdater } = require('electron-updater');
       this.au = autoUpdater;
+      autoUpdater.setFeedURL(FEED);
       autoUpdater.autoDownload = true;
       autoUpdater.autoInstallOnAppQuit = true;
       autoUpdater.allowPrerelease = true; // the beta builds are published as prereleases
@@ -65,4 +61,4 @@ class Updater {
   stop() { if (this.timer) clearInterval(this.timer); }
 }
 
-module.exports = { Updater, publishConfig, PLACEHOLDER };
+module.exports = { Updater, publishConfig, FEED };
