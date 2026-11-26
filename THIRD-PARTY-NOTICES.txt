@@ -1,0 +1,11 @@
+Rap Sheet (beta) includes the following third-party software. Each remains under its own license.
+
+- Electron (MIT) and Chromium (many licenses). Full texts ship in this app's folder as LICENSE and LICENSES.chromium.html.
+- tesseract.js 7.0.0 - Apache License 2.0 - https://github.com/naptha/tesseract.js
+  (wraps the Tesseract OCR engine, Apache 2.0)
+- @tesseract.js-data/eng 1.0.0 - English language data, MIT / Apache 2.0 - https://github.com/naptha/tessdata
+- uiohook-napi 1.5.5 - MIT - https://github.com/SnosMe/uiohook-napi
+  (includes libuiohook, which is LGPL-3.0 / GPL-3.0 licensed; see node_modules/uiohook-napi/libuiohook/LICENSE).
+  NOTE: libuiohook's license terms need review before any public (non-beta) release.
+
+Full license texts for the npm packages are included in each package's folder under resources/app/node_modules.

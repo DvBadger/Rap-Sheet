@@ -1,0 +1,90 @@
+{
+  "name": "rap-sheet",
+  "productName": "Rap Sheet",
+  "version": "1.6.0-beta.2",
+  "description": "Clip, mark and report cheaters: hotkey incident marks, replay clip linking, on-screen name suggestions and repeat-offender tracking.",
+  "main": "src/main.js",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/lib.test.js test/hotkeys.test.js",
+    "package:win": "electron-packager . \"Rap Sheet\" --platform=win32 --arch=x64 --icon=assets/icon.ico --out=dist --overwrite --asar=false --ignore=\"^/(dist|test|scripts|\\.git)\" --ignore=\"\\.md$\"",
+    "dist": "electron-builder --win nsis --x64 --publish never"
+  },
+  "dependencies": {
+    "@tesseract.js-data/eng": "1.0.0",
+    "electron-updater": "6.8.11",
+    "tesseract.js": "7.0.0",
+    "uiohook-napi": "1.5.5"
+  },
+  "devDependencies": {
+    "@electron/packager": "20.3.0",
+    "electron": "33.4.11",
+    "electron-builder": "^26.18.0"
+  },
+  "author": "Rap Sheet beta",
+  "build": {
+    "appId": "com.rapsheet.app",
+    "productName": "Rap Sheet",
+    "copyright": "Rap Sheet beta",
+    "asar": false,
+    "npmRebuild": false,
+    "nodeGypRebuild": false,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "package.json",
+      "THIRD-PARTY-NOTICES.txt",
+      "!**/*.md",
+      "!**/test/**",
+      "!**/*.map",
+      "!**/uiohook-napi/prebuilds/darwin-*/**",
+      "!**/uiohook-napi/prebuilds/linux-*/**",
+      "!**/uiohook-napi/prebuilds/win32-arm64/**"
+    ],
+    "extraResources": [
+      {
+        "from": "THIRD-PARTY-NOTICES.txt",
+        "to": "THIRD-PARTY-NOTICES.txt"
+      },
+      {
+        "from": "BETA-README.txt",
+        "to": "BETA-README.txt"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico",
+      "artifactName": "RapSheet-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Rap Sheet",
+      "deleteAppDataOnUninstall": false,
+      "runAfterFinish": true
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "DvBadger",
+        "repo": "Rap-Sheet",
+        "releaseType": "prerelease"
+      }
+    ]
+  }
+}

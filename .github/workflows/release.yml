@@ -1,0 +1,30 @@
+name: Build beta installer
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: RapSheet-installer
+          path: |
+            release/RapSheet-Setup-*.exe
+            release/latest.yml
+      - name: Publish prerelease
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VER=$(node -p "require('./package.json').version")
+          gh release create "v$VER" release/RapSheet-Setup-*.exe release/latest.yml release/RapSheet-Setup-*.exe.blockmap --prerelease --title "Rap Sheet $VER" --notes "Beta build. Not code-signed: Windows will warn on first run."

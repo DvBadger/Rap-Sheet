@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data:; style-src 'self'; script-src 'self'">
+<title>Rap Sheet</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div class="brand"><span class="mark" aria-hidden="true"></span>Rap Sheet</div>
+    <nav id="tabs">
+      <button type="button" data-tab="incidents" class="tab-btn active">Incidents</button>
+      <button type="button" data-tab="report" class="tab-btn">Report</button>
+      <button type="button" data-tab="offenders" class="tab-btn">Repeat offenders</button>
+      <button type="button" data-tab="settings" class="tab-btn">Settings</button>
+      <button type="button" data-tab="help" class="tab-btn">How to use</button>
+    </nav>
+    <div class="pills" id="pills"></div>
+  </header>
+
+  <main>
+    <!-- ============================ INCIDENTS ============================ -->
+    <section id="tab-incidents" class="tab">
+      <div class="row-between">
+        <div>
+          <h1>Incidents</h1>
+          <p class="muted" id="inc-sub"></p>
+        </div>
+        <button type="button" id="btn-mark" class="primary">Mark incident now</button>
+      </div>
+
+      <div id="live" class="panel" hidden>
+        <div class="row-between">
+          <h2>Screen reading</h2>
+          <span id="live-status" class="tag"></span>
+        </div>
+        <div class="live-grid">
+          <div class="live-shot"><img id="live-img" alt="The part of the screen being read"></div>
+          <div>
+            <p class="muted small">Names seen repeatedly in the last 45 seconds</p>
+            <div id="live-chips" class="chips"></div>
+            <pre id="live-text" class="mono small"></pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="incidents-list" class="list"></div>
+      <p id="incidents-empty" class="empty"></p>
+    </section>
+
+    <!-- ============================ REPORT ============================ -->
+    <section id="tab-report" class="tab" hidden>
+      <div class="two-col">
+        <div class="panel">
+          <h2>Report details</h2>
+          <form id="rp-form" autocomplete="off">
+            <div class="grid2">
+              <label class="field"><span>Game</span><select id="rp-game"></select></label>
+              <label class="field"><span>Date and time</span><input type="datetime-local" id="rp-when"></label>
+            </div>
+            <div class="grid2">
+              <label class="field"><span>Server or lobby</span><input type="text" id="rp-server" placeholder="Server name, region, or match ID"></label>
+              <label class="field"><span>Player name</span><input type="text" id="rp-player" placeholder="Exactly as shown in game"></label>
+            </div>
+            <fieldset>
+              <legend>What it looked like</legend>
+              <div class="chips" id="rp-behaviors"></div>
+            </fieldset>
+            <label class="field"><span>What happened</span><textarea id="rp-desc" placeholder="Example: Tracked my squad through two walls for 30 seconds, then killed three of us without turning toward us."></textarea></label>
+            <label class="field"><span>Witnesses</span><input type="text" id="rp-wit" placeholder="Squadmates who saw it"></label>
+          </form>
+        </div>
+
+        <div class="panel">
+          <div class="row-between">
+            <h2>Report text</h2>
+            <div class="btns">
+              <button type="button" id="rp-copy" class="primary" data-label="Copy report">Copy report</button>
+              <button type="button" id="rp-save" class="ghost" data-label="Save report">Save report</button>
+            </div>
+          </div>
+          <div id="rp-history" class="banner warn" hidden></div>
+          <textarea id="rp-out" class="mono out" readonly aria-label="Generated report text"></textarea>
+          <div id="rp-evidence" class="evidence"></div>
+          <div id="rp-route" class="banner info"></div>
+          <div class="btns"><button type="button" id="rp-new" class="ghost">Start a blank report</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ OFFENDERS ============================ -->
+    <section id="tab-offenders" class="tab" hidden>
+      <h1>Repeat offenders</h1>
+      <p class="muted">Players you have reported more than once rise to the top. Names are matched loosely, so a one-letter misread still counts as the same player.</p>
+      <div id="off-list" class="list"></div>
+      <p id="off-empty" class="empty"></p>
+    </section>
+
+    <!-- ============================ SETTINGS ============================ -->
+    <section id="tab-help" class="tab" hidden>
+      <h1>How to use Rap Sheet</h1>
+      <p class="muted">Quick start. Everything stays on your PC.</p>
+      <div class="panel help">
+        <h2>1. Set up once</h2>
+        <ul>
+          <li>Settings: check your <b>hotkey</b> (default F5), your <b>game</b> (choose Other and type a name for new games), and the <b>game window</b> from the dropdown.</li>
+          <li>Turn on <b>Recording</b> to save a video of each incident, and <b>Screen reading</b> to suggest player names.</li>
+          <li>Click <b>Move / resize area</b> and drag the box over the part of the screen where names show (kill feed, nameplates, chat). Press Enter to save. You can move it any time, and it is remembered per game window.</li>
+        </ul>
+        <h2>2. In game</h2>
+        <ul>
+          <li>See something suspicious? Press <b class="hk-label">your hotkey</b>. This marks the moment and starts recording and reading names.</li>
+          <li>Press it <b>again</b> when it is over. It also stops by itself after the time limit in Settings.</li>
+          <li>Keep playing. You do not need to alt-tab.</li>
+        </ul>
+        <h2>3. After the match</h2>
+        <ul>
+          <li><b>Incidents</b> tab: each mark shows the recording and any names it read. Tap the right name, then press <b>Make report</b>.</li>
+          <li><b>Report</b> tab: pick the suspect name, tick what they did, add a short description. Use <b>Choose file</b> to attach a clip or screenshot, or <b>Drag out</b> to drop it into Discord or a report form.</li>
+          <li>Copy the report text and send it to the game's report channel. The tab shows where to send it for each game.</li>
+          <li><b>Repeat offenders</b> tab: shows players you have reported more than once.</li>
+        </ul>
+        <h2>Tips</h2>
+        <ul>
+          <li>Run "Test reading now" in Settings with the game open to check the name area is right.</li>
+          <li>If the game stutters, turn Recording quality down to 720p or switch off Screen reading.</li>
+          <li>Something wrong? Settings, <b>Copy beta feedback</b>, then paste it to whoever sent you the beta.</li>
+        </ul>
+        <p class="small muted">Rap Sheet only reads your own screen and does not touch the game. Some anti-cheat systems may still object to screen capture or global hotkeys, so try casual play first. By default Rap Sheet uses a normal Windows hotkey and does not watch your keyboard.</p>
+      </div>
+    </section>
+
+    <section id="tab-settings" class="tab" hidden>
+      <h1>Settings</h1>
+
+      <div class="panel">
+        <h2>Incident hotkey</h2>
+        <p class="muted">Press this key in game to start an incident, and again to stop. Default is F5. Rap Sheet never presses keys for you.</p>
+        <div class="row"><span class="mono key" id="st-hotkey">not set</span><button type="button" id="st-hotkey-btn" class="ghost">Change key</button><span id="st-hotkey-msg" class="muted small"></span></div>
+        <label class="check"><input type="checkbox" id="st-hook"> <span>Advanced key listener (not recommended). Watches every key press instead of using a normal Windows hotkey. Some anti-cheat may object. Only turn this on if the normal key does not work for you.</span></label>
+        <label class="field inline"><span>Backup mark key</span><input type="text" id="st-fallback" spellcheck="false"><span class="muted small" id="st-fallback-msg"></span></label>
+      </div>
+
+      <div class="panel">
+        <h2>Recording</h2>
+        <p class="muted">Rap Sheet can record the game window itself, so you get video without relying on Streamlabs. Press your incident key to start recording and press it again to stop. It has no sound, and saves a video file you can drag into Discord or most upload pages. It cannot include what happened before the first press.</p>
+        <label class="check"><input type="checkbox" id="st-rec-on"> Record the game window between key presses</label>
+        <label class="field inline"><span>Quality</span>
+          <select id="st-rec-quality"><option value="720">720p, 30 fps (lighter)</option><option value="1080">1080p, 30 fps (sharper, uses more CPU)</option></select></label>
+        <label class="field inline"><span>What to record</span>
+          <select id="st-rec-source"><option value="screen">The whole display the game is on (smooth, recommended)</option><option value="window">Only the game window (private, but about 15 fps)</option></select></label>
+        <label class="field inline" id="st-rec-display-row"><span>Display</span>
+          <select id="st-rec-display"></select></label>
+        <p class="small muted" id="st-rec-source-help"></p>
+        <label class="field inline"><span>Encoder</span>
+          <select id="st-rec-encoder"><option value="auto">Automatic (graphics card first)</option><option value="h264">H.264 (graphics card, makes .mp4)</option><option value="vp8">Software VP8 (makes .webm, uses the CPU)</option></select></label>
+        <div class="row"><input type="text" id="st-rec-dir" readonly><button type="button" id="st-rec-choose" class="ghost">Choose folder</button><button type="button" id="st-rec-open" class="ghost">Open folder</button></div>
+        <p class="small muted" id="st-rec-msg"></p>
+      </div>
+
+      <div class="panel">
+        <h2>Replay clips</h2>
+        <p class="muted">The folder where Streamlabs saves replays (Settings &gt; Output &gt; Recording Path). Rap Sheet links each new clip to your incident.</p>
+        <div class="row"><input type="text" id="st-dir" readonly><button type="button" id="st-dir-choose" class="ghost">Choose</button><button type="button" id="st-dir-detect" class="ghost">Auto-detect</button></div>
+        <p class="small" id="st-dir-msg"></p>
+        <label class="field inline"><span>Replay length (seconds)</span><input type="number" id="st-replaylen" min="10" max="600" step="5"></label>
+      </div>
+
+      <div class="panel">
+        <h2>Screen reading</h2>
+        <p class="muted">Reads one small area of your screen (the kill feed or name tags) and remembers names that keep appearing, so the right name is one tap away. By default it only reads between two presses of your incident key. It reads only the game window's own picture, so Discord, overlays and anything else on your desktop are never seen. It reads pixels the way OBS does and never touches the game itself. Needs the game in borderless windowed mode and not minimized.</p>
+        <label class="check"><input type="checkbox" id="st-ocr-on"> Read names from the screen</label>
+        <label class="field inline"><span>When to read</span>
+          <select id="st-ocr-mode"><option value="press">Only between key presses (lightest)</option><option value="always">All the time (uses more CPU)</option></select></label>
+        <p class="muted small" id="st-ocr-mode-help"></p>
+        <div class="row"><label class="field inline"><span>Game window</span><select id="st-window"></select></label><button type="button" id="st-window-refresh" class="ghost">Refresh list</button></div>
+        <p class="muted small" id="st-window-msg"></p>
+        <div class="row"><button type="button" id="st-region" class="ghost">Select area</button><span class="muted small" id="st-region-sum"></span></div>
+        <div class="row">
+          <label class="field inline"><span>Check every</span>
+            <select id="st-interval"><option value="1000">1 second</option><option value="2000">2 seconds</option><option value="3000">3 seconds</option><option value="5000">5 seconds</option></select></label>
+          <button type="button" id="st-ocr-test" class="ghost">Test reading now</button>
+        </div>
+        <div id="st-ocr-result" class="test-result" hidden><img id="st-ocr-img" alt=""><div><pre id="st-ocr-text" class="mono small"></pre><div id="st-ocr-names" class="chips"></div></div></div>
+        <label class="field"><span>Your name and squadmates (hidden from suggestions, one per line)</span><textarea id="st-ignore" rows="3" spellcheck="false"></textarea></label>
+      </div>
+
+      <div class="panel">
+        <h2>General</h2>
+        <label class="field inline"><span>Default game</span><select id="st-game"></select></label>
+        <label class="field inline"><span>Game name (if "Other")</span><input type="text" id="st-gamename" maxlength="60" placeholder="e.g. the game you are testing"></label>
+        <label class="check"><input type="checkbox" id="st-shot"> Save a screenshot at each incident</label>
+        <label class="check"><input type="checkbox" id="st-login"> Start with Windows (runs quietly in the tray)</label>
+        <label class="check"><input type="checkbox" id="st-tray"> Keep running in the tray when the window is closed</label>
+      </div>
+
+      <div class="panel">
+        <h2>Data and diagnostics</h2>
+        <p class="muted small" id="st-about"></p>
+        <div class="row"><span class="small" id="st-update">Updates: checking...</span><button type="button" id="st-update-check" class="ghost">Check for updates</button><button type="button" id="st-update-install" class="primary" hidden>Restart to update</button></div>
+        <p class="small" id="st-usage">Checking resource use...</p>
+        <div class="btns">
+          <button type="button" id="st-open-data" class="ghost">Open data folder</button>
+          <button type="button" id="st-open-log" class="ghost">Open log file</button>
+          <button type="button" id="st-copy-log" class="ghost" data-label="Copy diagnostics">Copy diagnostics</button>
+          <button type="button" id="st-copy-fb" class="ghost" data-label="Copy beta feedback">Copy beta feedback</button>
+          <button type="button" id="st-clear" class="danger" data-label="Clear incidents">Clear incidents</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="wizard" class="wizard" hidden></div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

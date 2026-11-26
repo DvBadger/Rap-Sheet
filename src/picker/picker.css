@@ -1,0 +1,19 @@
+html, body { margin: 0; height: 100%; overflow: hidden; background: #000; cursor: crosshair; user-select: none; }
+#bg { position: fixed; inset: 0; width: 100vw; height: 100vh; object-fit: fill; }
+#dim { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.45); }
+#sel { position: fixed; border: 2px solid #6DB4D4; background: rgba(109, 180, 212, 0.12); box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5); cursor: move; box-sizing: border-box; }
+#sel .h { position: absolute; width: 12px; height: 12px; background: #6DB4D4; border: 2px solid #0B1A22; border-radius: 3px; box-sizing: border-box; }
+#sel .h[data-h="nw"] { left: -7px; top: -7px; cursor: nwse-resize; }
+#sel .h[data-h="n"]  { left: calc(50% - 6px); top: -7px; cursor: ns-resize; }
+#sel .h[data-h="ne"] { right: -7px; top: -7px; cursor: nesw-resize; }
+#sel .h[data-h="e"]  { right: -7px; top: calc(50% - 6px); cursor: ew-resize; }
+#sel .h[data-h="se"] { right: -7px; bottom: -7px; cursor: nwse-resize; }
+#sel .h[data-h="s"]  { left: calc(50% - 6px); bottom: -7px; cursor: ns-resize; }
+#sel .h[data-h="sw"] { left: -7px; bottom: -7px; cursor: nesw-resize; }
+#sel .h[data-h="w"]  { left: -7px; top: calc(50% - 6px); cursor: ew-resize; }
+#hint { position: fixed; top: 14px; left: 50%; transform: translateX(-50%); max-width: min(760px, 92vw); padding: 10px 16px; border-radius: 8px;
+  background: #18222A; color: #E4EBEF; font: 14px/1.4 "Segoe UI", system-ui, sans-serif; text-align: center; pointer-events: none; }
+#bar { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; padding: 8px; border-radius: 10px; background: #18222A; cursor: default; }
+#bar[hidden] { display: none; }
+#bar button { font: 600 13px "Segoe UI", system-ui, sans-serif; padding: 7px 14px; border-radius: 6px; border: 1px solid #6DB4D4; background: transparent; color: #6DB4D4; cursor: pointer; }
+#bar button#b-save { background: #6DB4D4; color: #0B1A22; }
