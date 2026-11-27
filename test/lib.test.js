@@ -196,3 +196,17 @@ test('window name matching never picks an unrelated window', () => {
   assert.equal(pickWindowName('Chrome', names), null);
   assert.equal(pickWindowName('', names), null);
 });
+
+test('menu and loading-screen words are not offered as player names', () => {
+  const { extractCandidates } = require('../src/lib/ocrNames');
+  const words = ['EARLY', 'ACCESS', 'KNOCKOUT', 'SURRENDER', 'FINAL', 'alydeez', 'Hunter_92'].map((text) => ({ text, confidence: 90 }));
+  assert.deepEqual(extractCandidates(words, {}), ['alydeez', 'Hunter_92']);
+});
+
+test('report states how long after the key press the recording began', () => {
+  const { buildReport } = require('../src/lib/report');
+  const slow = buildReport({ game: 'ROB RUN', t: Date.now(), video: { file: 'a.webm', durationSec: 60, startDelaySec: 12.4 } });
+  assert.match(slow, /starts about 12 seconds after I pressed my report key/);
+  const fast = buildReport({ game: 'ROB RUN', t: Date.now(), video: { file: 'a.webm', durationSec: 60, startDelaySec: 0.8 } });
+  assert.match(fast, /starts when I spotted it/);
+});

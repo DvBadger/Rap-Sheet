@@ -225,11 +225,17 @@
     var names = (m.candidates || []).map(function (c) { return c.name; });
     if (m.suspect && names.indexOf(m.suspect) < 0) names.unshift(m.suspect);
     var chips = h('div', { class: 'chips' });
+    var ign = (S.settings.ignoreNames || []).map(function (x) { return String(x).toLowerCase(); });
+    names = names.filter(function (n) { return n === m.suspect || ign.indexOf(String(n).toLowerCase()) < 0; });
     names.forEach(function (n) {
       chips.appendChild(h('button', {
         type: 'button', class: 'chip' + (m.suspect === n ? ' on' : ''),
         onclick: function () { rk.updateMark(m.id, { suspect: m.suspect === n ? '' : n }); }
       }, n));
+      chips.appendChild(h('button', {
+        type: 'button', class: 'chip-x', title: 'Not a name. Stop suggesting "' + n + '".', 'aria-label': 'Not a name: ' + n,
+        onclick: function () { rk.updateSettings({ ignoreNames: (S.settings.ignoreNames || []).concat([n]) }); }
+      }, '\u00d7'));
     });
     var hint = null;
     if (!names.length) {
@@ -484,7 +490,7 @@
     setVal($('#st-game'), s.game);
     if (document.activeElement !== $('#st-gamename')) $('#st-gamename').value = s.gameName || '';
     var u = S.update || { status: 'disabled' };
-    var utxt = { disabled: 'Updates: not available' + (u.reason ? ' (' + u.reason + ')' : ''), idle: 'Updates: up to date check pending', checking: 'Updates: checking...', uptodate: 'Updates: you have the latest version', downloading: 'Updates: downloading ' + (u.version || '') + ' (' + (u.percent || 0) + '%)', ready: 'Updates: ' + (u.version || 'new version') + ' is ready. It installs when you close Rap Sheet, or restart now.', error: 'Updates: could not check (' + (u.error || 'unknown error') + ')' }[u.status] || 'Updates: unknown';
+    var utxt = { disabled: 'Updates: not available' + (u.reason ? ' (' + u.reason + ')' : ''), idle: 'Updates: checking soon', checking: 'Updates: checking...', uptodate: 'Updates: you have the latest version', downloading: 'Updates: downloading ' + (u.version || '') + ' (' + (u.percent || 0) + '%)', ready: 'Updates: ' + (u.version || 'new version') + ' is ready. It installs when you close Rap Sheet, or restart now.', error: 'Updates: could not check (' + (u.error || 'unknown error') + ')' }[u.status] || 'Updates: unknown';
     $('#st-update').textContent = utxt;
     $('#st-update-check').disabled = u.status === 'disabled' || u.status === 'checking' || u.status === 'downloading' || u.status === 'ready';
     $('#st-update-install').hidden = u.status !== 'ready';
@@ -562,7 +568,7 @@
     on('#st-rec-quality', 'change', function (e) { rk.updateSettings({ record: { quality: e.target.value } }); });
     on('#st-rec-source', 'change', function (e) { rk.updateSettings({ record: { source: e.target.value } }); });
     on('#st-rec-display', 'change', function (e) { rk.updateSettings({ record: { display: e.target.value } }); });
-    on('#st-rec-encoder', 'change', function (e) { rk.updateSettings({ record: { encoder: e.target.value } }); });
+    on('#st-rec-encoder', 'change', function (e) { rk.updateSettings({ record: { encoder: e.target.value, lastMime: '' } }); });
     on('#st-rec-choose', 'click', function () { rk.chooseRecordDir(); });
     on('#st-rec-open', 'click', function () { rk.openRecordDir(); });
     on('#st-ocr-mode', 'change', function (e) { rk.updateSettings({ ocr: { mode: e.target.value } }); });

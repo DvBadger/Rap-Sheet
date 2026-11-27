@@ -139,3 +139,6 @@ ul.plain { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
 .help h2 { font-size: 1.05rem; margin: 14px 0 6px; }
 .help h2:first-child { margin-top: 0; }
 .help ul { margin: 0 0 4px; padding-left: 20px; display: grid; gap: 6px; }
+
+.chip-x { background: none; border: 0; color: var(--muted); cursor: pointer; padding: 0 6px 0 0; margin-left: -6px; font-size: 1rem; line-height: 1; }
+.chip-x:hover { color: var(--text, #fff); }

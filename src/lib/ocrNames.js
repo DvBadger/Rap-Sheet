@@ -7,7 +7,17 @@ const STOP = new Set([
   'killed', 'kills', 'kill', 'eliminated', 'headshot', 'assisted', 'assist', 'by', 'with', 'the', 'and',
   'destroyed', 'revived', 'down', 'downed', 'died', 'shot', 'knifed', 'vs', 'you', 'player', 'team',
   'squad', 'score', 'level', 'lvl', 'xp', 'ping', 'fps', 'spotted', 'captured', 'bled', 'out', 'from',
-  'was', 'has', 'for', 'his', 'her', 'their', 'ammo', 'health', 'reload'
+  'was', 'has', 'for', 'his', 'her', 'their', 'ammo', 'health', 'reload',
+  // menu, loading-screen and HUD words that are never player names
+  'early', 'access', 'does', 'not', 'reflect', 'final', 'quality', 'game', 'knockout', 'surrender', 'report',
+  'chat', 'mute', 'block', 'friend', 'friends', 'invite', 'party', 'lobby', 'match', 'round', 'play', 'settings',
+  'options', 'quit', 'exit', 'back', 'continue', 'resume', 'start', 'ready', 'waiting', 'loading', 'press',
+  'hold', 'victory', 'defeat', 'winner', 'lose', 'rank', 'ranked', 'mode', 'map', 'respawn', 'spectate',
+  'objective', 'zone', 'warning', 'danger', 'safe', 'build', 'version', 'server', 'region', 'login', 'online',
+  'offline', 'connecting', 'connected', 'select', 'confirm', 'cancel', 'accept', 'decline', 'ready', 'next',
+  'previous', 'inventory', 'equip', 'weapon', 'weapons', 'item', 'items', 'shop', 'store', 'buy', 'sell', 'crafting',
+  'time', 'remaining', 'left', 'right', 'about', 'are', 'you', 'your', 'this', 'that', 'will', 'can', 'have', 'all',
+  'new', 'now', 'out', 'off', 'one', 'two', 'but', 'any', 'get', 'got', 'use', 'used', 'more', 'than', 'then'
 ]);
 
 function cleanToken(t) {

@@ -6,11 +6,18 @@
 (function () {
   var mr = null, stream = null, queue = Promise.resolve(), gotFirst = false;
 
-  function candidates(encoder) {
-    var h264 = ['video/mp4;codecs=avc1.42E01E', 'video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=h264'];
-    var vp8 = ['video/webm;codecs=vp8', 'video/webm'];
+  function supported(m) { try { return MediaRecorder.isTypeSupported(m); } catch (e) { return false; } }
+
+  // The three mp4 spellings use the same encoder, so if one stays silent the others will too. Try mp4 once,
+  // then H.264 in webm, then VP8. Whatever worked last time goes first, so a PC where mp4 stalls under game load
+  // does not wait for it again at the start of every incident.
+  function candidates(encoder, prefer) {
+    var mp4 = ['video/mp4;codecs=avc1.42E01E', 'video/mp4;codecs=avc1', 'video/mp4'].filter(supported).slice(0, 1);
+    var h264 = mp4.concat(['video/webm;codecs=h264'].filter(supported));
+    var vp8 = ['video/webm;codecs=vp8', 'video/webm'].filter(supported).slice(0, 1);
     var list = encoder === 'vp8' ? vp8 : encoder === 'h264' ? h264 : h264.concat(vp8);
-    return list.filter(function (m) { try { return MediaRecorder.isTypeSupported(m); } catch (e) { return false; } });
+    if (prefer && list.indexOf(prefer) > 0) { list.splice(list.indexOf(prefer), 1); list.unshift(prefer); }
+    return list;
   }
 
   // Test hook only: draw a moving picture instead of capturing a window.
@@ -45,7 +52,7 @@
         stream.getTracks().forEach(function (t) { t.stop(); });
         queue.then(function () { window.rec.stopped(); });
       };
-      timer = setTimeout(function () { done(false); }, 3500);
+      timer = setTimeout(function () { done(false); }, 4000);
       try { rec.start(1000); } catch (e) { done(false); }
     });
   }
@@ -53,10 +60,12 @@
   window.__start = async function (o) {
     try {
       gotFirst = false; mr = null; queue = Promise.resolve();
+      var t0 = performance.now();
       stream = o.fake
         ? fakeStream(o.maxW, o.maxH, o.fps)
         : await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: { ideal: o.fps, max: o.fps }, width: { max: o.maxW }, height: { max: o.maxH } }, audio: false });
-      var list = candidates(o.encoder), tried = [];
+      var capMs = Math.round(performance.now() - t0);
+      var list = candidates(o.encoder, o.prefer), tried = [];
       var ok = false, used = '';
       for (var i = 0; i < list.length && !ok; i++) {
         tried.push(list[i]);
@@ -71,7 +80,7 @@
       stream.getVideoTracks()[0].addEventListener('ended', function () { if (mr && mr.state !== 'inactive') mr.stop(); });
       startCounting();
       var s = stream.getVideoTracks()[0].getSettings();
-      return { ok: true, width: s.width || 0, height: s.height || 0, fps: s.frameRate || 0, mime: used, skipped: tried.slice(0, -1) };
+      return { ok: true, width: s.width || 0, height: s.height || 0, fps: s.frameRate || 0, mime: used, skipped: tried.slice(0, -1), capMs: capMs, encMs: Math.round(performance.now() - t0) - capMs };
     } catch (e) {
       return { ok: false, error: String((e && e.message) || e) };
     }

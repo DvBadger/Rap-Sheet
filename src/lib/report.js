@@ -47,7 +47,8 @@ function buildReport(r) {
     lines.push('Clip: [not attached]');
   }
   if (r.video && r.video.file) {
-    lines.push(`Recording: ${r.video.file}${r.video.durationSec ? ` (${Math.round(r.video.durationSec)} seconds, starts when I spotted it)` : ''}`);
+    const d = r.video.startDelaySec;
+    lines.push(`Recording: ${r.video.file}${r.video.durationSec ? ` (${Math.round(r.video.durationSec)} seconds` + (d >= 2 ? `, starts about ${Math.round(d)} seconds after I pressed my report key, so the cheating may be just before the start)` : ', starts when I spotted it)') : ''}`);
   }
   if (r.screenshotFile) lines.push('Screenshot: attached (taken at the moment of the report)');
   lines.push(`Witnesses: ${blank(r.witnesses)}`);

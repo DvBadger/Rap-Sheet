@@ -252,9 +252,9 @@ async function startRecording(mark) {
   if (recTarget.source === 'screen') recTarget.displayId = pickRecordDisplay().id;
   if (rw.webContents.isLoading()) await new Promise((r) => rw.webContents.once('did-finish-load', r));
   const fd = fs.openSync(file, 'w');
-  recorder = { win: rw, fd, file, name, ext: '.webm', startedAt: Date.now(), bytes: 0, markId: mark.id, finish: null };
+  recorder = { win: rw, fd, file, name, ext: '.webm', startedAt: Date.now(), markT: mark.t, bytes: 0, markId: mark.id, finish: null };
   const res = await rw.webContents.executeJavaScript(
-    `window.__start(${JSON.stringify({ fps: 30, maxW: q.maxW, maxH: q.maxH, bps: q.bps, fake: !!process.env.RK_FAKE_RECORD, encoder: s.record.encoder || 'auto' })})`, true);
+    `window.__start(${JSON.stringify({ fps: 30, maxW: q.maxW, maxH: q.maxH, bps: q.bps, fake: !!process.env.RK_FAKE_RECORD, encoder: s.record.encoder || 'auto', prefer: s.record.lastMime || '' })})`, true);
   if (!res || !res.ok) {
     try { fs.closeSync(fd); fs.unlinkSync(file); } catch (e) { /* ignore */ }
     recorder = null;
@@ -265,7 +265,9 @@ async function startRecording(mark) {
   }
   recorder.startedAt = Date.now();
   recorder.ext = /mp4/i.test(res.mime) ? '.mp4' : '.webm';
-  log('recording started', name, recTarget.source === 'screen' ? `screen display ${recTarget.displayId}` : 'game window', `${res.width}x${res.height}`, `${res.fps}fps`, res.mime, res.skipped && res.skipped.length ? `(skipped: ${res.skipped.join(', ')})` : '');
+  recorder.startDelaySec = Math.max(0, Math.round((recorder.startedAt - mark.t) / 100) / 10);
+  if (res.mime && s.record.lastMime !== res.mime && !process.env.RK_FAKE_RECORD) store.updateSettings({ record: { lastMime: res.mime } });
+  log('recording started', name, recTarget.source === 'screen' ? `screen display ${recTarget.displayId}` : 'game window', `${res.width}x${res.height}`, `${res.fps}fps`, res.mime, `startDelay=${recorder.startDelaySec}s (screen ${res.capMs}ms, encoder ${res.encMs}ms)`, res.skipped && res.skipped.length ? `(skipped: ${res.skipped.join(', ')})` : '');
   return { ok: true };
 }
 
@@ -287,7 +289,7 @@ async function stopRecording() {
   const finalPath = path.join(path.dirname(r.file), finalName);
   try { fs.renameSync(r.file, finalPath); } catch (e) { log('could not rename recording', e); return { file: path.basename(r.file), path: r.file, durationSec, bytes: size }; }
   log('recording saved', finalName, `${Math.round(size / 1024)} KB`, `${durationSec}s`, `~${Math.round(size * 8 / 1000 / durationSec)} kbps`);
-  return { file: finalName, path: finalPath, durationSec, bytes: size };
+  return { file: finalName, path: finalPath, durationSec, bytes: size, startDelaySec: r.startDelaySec || 0 };
 }
 
 // Drag a clip or screenshot straight from Rap Sheet into Discord, a browser upload box or a folder.
@@ -440,6 +442,7 @@ function sanitize(p) {
     if (out.record.source !== undefined) out.record.source = out.record.source === 'window' ? 'window' : 'screen';
     if (out.record.display !== undefined) out.record.display = String(out.record.display || 'auto').slice(0, 40);
     if (out.record.encoder !== undefined && !['auto', 'h264', 'vp8'].includes(out.record.encoder)) out.record.encoder = 'auto';
+    if (out.record.lastMime !== undefined) out.record.lastMime = ''; // the screen can only clear it
     if (out.record.dir !== undefined) out.record.dir = String(out.record.dir || '').slice(0, 400);
   }
   if (out.ocr) {

@@ -13,7 +13,7 @@ const DEFAULTS = () => ({
     fallbackHotkey: 'Control+Shift+F9',
     recordingDir: '',
     replayLenSec: 90,
-    record: { enabled: true, source: 'screen', display: 'auto', quality: '720', encoder: 'auto', dir: '' },
+    record: { enabled: true, source: 'screen', display: 'auto', quality: '720', encoder: 'auto', dir: '', lastMime: '' },
     ocr: { enabled: false, gameWindow: '', regionsByWindow: {}, mode: 'press', maxWatchSec: 120, region: null, intervalMs: 2000, minConf: 60, scale: 2 },
     ignoreNames: [],
     saveScreenshot: true,
